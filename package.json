@@ -1,0 +1,30 @@
+{
+  "name": "authentication-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node dist/index.js",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nihuaway/Authentication-service.git"
+  },
+  "author": "Nihuaway",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nihuaway/Authentication-service/issues"
+  },
+  "homepage": "https://github.com/Nihuaway/Authentication-service#readme",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.20",
+    "@types/node": "^20.8.10",
+    "typescript": "^5.2.2"
+  }
+}
