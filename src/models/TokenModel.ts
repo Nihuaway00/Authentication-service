@@ -1,4 +1,6 @@
+import {ObjectId} from "mongodb";
+
 export default class TokenModel{
-    constructor(userID: string, token: string) {
+    constructor(_id: ObjectId, userID: string, token: string) {
     }
 }

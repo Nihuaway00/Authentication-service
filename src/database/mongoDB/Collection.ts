@@ -1,6 +1,6 @@
 import * as mongoDB from "mongodb";
 import {ICollection} from "./ICollection";
-import {WithId} from "mongodb";
+import {InsertOneModel, ObjectId, OptionalUnlessRequiredId, WithId} from "mongodb";
 
 
 export class Collection<T extends mongoDB.BSON.Document> implements ICollection<T>{
@@ -24,6 +24,11 @@ export class Collection<T extends mongoDB.BSON.Document> implements ICollection<
 
     async getOne(filter: object) {
         return await this.collection.findOne(filter);
+    }
+
+    async insertOne(data: T, _id?: ObjectId){
+        // @ts-ignore
+        return await this.collection.insertOne({_id, ...data}, {forceServerObjectId: !!_id});
     }
 
 }

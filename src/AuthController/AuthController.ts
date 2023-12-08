@@ -22,7 +22,7 @@ class AuthController implements IAuthController{
         try{
             const {name, email, password} = req.body;
             await AuthService.registration(name, email, password);
-            res.sendStatus(201);
+            res.status(201).send("Your account had been created");
         }catch (e) {
             if(e instanceof ErrorHandler){
                 console.log("Error: ", e.message);
