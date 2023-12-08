@@ -11,9 +11,11 @@ export class Collection<T extends mongoDB.BSON.Document> implements ICollection<
     }
 
     async deleteMany(filter: object ): Promise<void> {
+        await this.collection.deleteMany(filter);
     }
 
     async deleteOne(filter: object): Promise<void> {
+        await this.collection.deleteOne(filter);
     }
 
     async getMany(filter: object){
