@@ -11,8 +11,9 @@ class AuthController implements IAuthController{
 
             res.send({user});
         }catch (e) {
-            if(e instanceof Error){
-                console.log("Error: ", e.message)
+            if(e instanceof ErrorHandler){
+                console.log("Error: ", e.message);
+                res.status(e.status).send(e.message);
             }
         }
     }
@@ -23,8 +24,9 @@ class AuthController implements IAuthController{
             await AuthService.registration(name, email, password);
             res.sendStatus(201);
         }catch (e) {
-            if(e instanceof Error){
-                console.log("Error: ", e.message)
+            if(e instanceof ErrorHandler){
+                console.log("Error: ", e.message);
+                res.status(e.status).send(e.message);
             }
         }
     }
@@ -35,8 +37,9 @@ class AuthController implements IAuthController{
 
             res.sendStatus(201);
         }catch (e) {
-            if(e instanceof Error){
-                console.log("Error: ", e.message)
+            if(e instanceof ErrorHandler){
+                console.log("Error: ", e.message);
+                res.status(e.status).send(e.message);
             }
         }
     }
@@ -47,8 +50,9 @@ class AuthController implements IAuthController{
 
             res.sendStatus(201);
         }catch (e) {
-            if(e instanceof Error){
-                console.log("Error: ", e.message)
+            if(e instanceof ErrorHandler){
+                console.log("Error: ", e.message);
+                res.status(e.status).send(e.message);
             }
         }
     }

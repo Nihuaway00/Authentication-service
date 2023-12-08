@@ -1,5 +1,6 @@
 import * as mongoDB from "mongodb";
 import {ICollection} from "./ICollection";
+import {WithId} from "mongodb";
 
 
 export class Collection<T extends mongoDB.BSON.Document> implements ICollection<T>{
@@ -15,14 +16,12 @@ export class Collection<T extends mongoDB.BSON.Document> implements ICollection<
     async deleteOne(filter: object): Promise<void> {
     }
 
-    async getMany(filter: object): Promise<T> {
-        // @ts-ignore
-        return undefined
+    async getMany(filter: object){
+        return await this.collection.find(filter);
     }
 
-    async getOne(filter: object): Promise<T> {
-        // @ts-ignore
-        return undefined;
+    async getOne(filter: object) {
+        return await this.collection.findOne(filter);
     }
 
 }

@@ -10,11 +10,11 @@ class AuthService implements IAuthService{
     }
 
     async registration(name: string, email: string, password: string): Promise<void> {
-        const userCollection = MongoDB.getCollection<IUser>('users');
-        const userFetcher = new Collection<IUser>(userCollection);
-        const query = {_id: "65716523e551a77339fc9af6"};
-        const userDoc = await userFetcher.getOne(query);
-        console.log(userDoc);
+        // const userCollection = MongoDB.getCollection<IUser>('users');
+        // const userFetcher = new Collection<IUser>(userCollection);
+        // const query = {name: "Troxya"};
+        // const userDoc = await userFetcher.getOne(query);
+        // console.log("user:", userDoc);
         throw new ErrorHandler(500, 'registration: no!');
     }
 

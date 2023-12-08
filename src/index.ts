@@ -3,16 +3,27 @@ import dotenv from 'dotenv';
 import { createRoutes } from './routes';
 import {MongoDB} from "./database/mongoDB/MongoDB";
 import {RedisDB} from "./database/redis/RedisDB";
+import cors from "cors";
+import cookieParser from "cookie-parser"
 
 dotenv.config();
+
+const corsConfig = {
+	origin: "*",
+	credentials: true,
+}
 
 const app: Express = express();
 const router: Router = express.Router()
 const port: string = process.env.PORT || '8000';
 
+app.disable("x-powered-by")
+app.use(cors(corsConfig))
+app.use(express.json())
+app.use(cookieParser("fff"))
+app.use(router)
 
-createRoutes(router)
-
+createRoutes(router);
 
 app.get('/', (req: Request, res: Response) => {
 	res.send('Server has been working...');
