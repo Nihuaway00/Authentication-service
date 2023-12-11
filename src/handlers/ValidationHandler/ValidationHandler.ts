@@ -1,5 +1,6 @@
 import {NextFunction,Request,Response} from "express-serve-static-core";
 import {ErrorHandler} from "../ErrorHandler/ErrorHandler";
+import {type} from "os";
 
 
 export class ValidationHandler{
@@ -10,21 +11,14 @@ export class ValidationHandler{
     }
 
     exist(req: Request, res: Response, next: NextFunction){
-        try{
-            Object.keys(this.filter).map(key => {
-                if(req.body[key] === undefined){
-                    console.log(req.body, key)
-                    throw new ErrorHandler(400, `Invalid input data: ${key}`)
-                }
-            })
-
-            next()
-        }catch (e) {
-            if(e instanceof ErrorHandler){
-                console.log("Error: ", e.message);
-                res.status(e.status).send(e.message);
+        Object.keys(this.filter).map(key => {
+            if(typeof req.body[key] !== typeof key || req.body[key] === undefined){
+                console.log(req.body, key)
+                throw new ErrorHandler(400, `Invalid input data: ${key}`)
             }
-        }
+        })
+
+        next()
     }
 }
 
