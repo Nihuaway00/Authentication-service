@@ -1,7 +1,7 @@
 import {IUser} from "../interfaces/IUser";
 
 export interface ILoginReturns{
-    jwt: string;
+    token: string;
     user: IUser;
 }
 

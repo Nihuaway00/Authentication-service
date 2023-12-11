@@ -7,8 +7,12 @@ class AuthController implements IAuthController{
     async login(req: Request, res: Response, next: NextFunction)  {
         try{
             const {email, password} = req.body;
-            const {jwt, user} = await AuthService.login(email, password);
+            if(req.cookies['token']){
+                throw new ErrorHandler(400, "You have been already logged in")
+            }
 
+            const {token, user} = await AuthService.login(email, password);
+            res.cookie("token", token);
             res.send({user});
         }catch (e) {
             if(e instanceof ErrorHandler){
