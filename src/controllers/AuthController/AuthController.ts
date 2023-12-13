@@ -1,8 +1,8 @@
 import {IAuthController} from "./IAuthController";
 import {NextFunction,Request,Response} from "express-serve-static-core";
-import {ErrorHandler} from "../handlers/ErrorHandler/ErrorHandler";
-import AuthService from "../Services/AuthService/AuthService";
-import EmailService from "../Services/EmailService/EmailService";
+import {ErrorHandler} from "../../handlers/ErrorHandler/ErrorHandler";
+import AuthService from "../../Services/AuthService/AuthService";
+import EmailService from "../../Services/EmailService/EmailService";
 
 class AuthController implements IAuthController{
     async login(req: Request, res: Response, next: NextFunction)  {

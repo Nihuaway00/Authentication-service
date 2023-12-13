@@ -1,5 +1,5 @@
 import { Router } from "express";
-import AuthController from "./AuthController/AuthController";
+import AuthController from "./controllers/AuthController/AuthController";
 import {ValidationHandler} from "./handlers/ValidationHandler/ValidationHandler";
 import {NextFunction, Response, Request} from "express-serve-static-core";
 
