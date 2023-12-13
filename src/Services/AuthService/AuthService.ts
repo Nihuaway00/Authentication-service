@@ -1,15 +1,14 @@
-import {IAuthService, ILoginReturns} from "./IAuthService";
-import {ErrorHandler} from "../handlers/ErrorHandler/ErrorHandler";
-import {Collection} from "../database/mongoDB/Collection";
-import {MongoDB} from "../database/mongoDB/MongoDB";
-import {IUser} from "../interfaces/IUser";
+import {ErrorHandler} from "../../handlers/ErrorHandler/ErrorHandler";
+import {Collection} from "../../database/mongoDB/Collection";
+import {MongoDB} from "../../database/mongoDB/MongoDB";
+import {IUser} from "../../interfaces/IUser";
 import bcrypt from 'bcrypt';
-import {IPassword} from "../interfaces/IPassword";
+import {IPassword} from "../../interfaces/IPassword";
 import {ObjectId, UUID} from "mongodb";
 import jwt from "jsonwebtoken"
 
-class AuthService implements IAuthService{
-    async login(email: string, password: string): Promise<ILoginReturns>{
+class AuthService{
+    async login(email: string, password: string){
         //check email
 
         const userCollection = MongoDB.getCollection<IUser>('users');
@@ -34,7 +33,7 @@ class AuthService implements IAuthService{
         return {token, user: userDoc as IUser}
     }
 
-    async registration(name: string, email: string, password: string): Promise<void> {
+    async registration(name: string, email: string, password: string) {
         const userCollection = MongoDB.getCollection<IUser>('users');
         const userFetcher = new Collection<IUser>(userCollection);
 
@@ -61,12 +60,40 @@ class AuthService implements IAuthService{
         await userFetcher.insertOne({name, email}, userID);
     }
 
-    async restorePassword(newPassword: string): Promise<void> {
-        throw new ErrorHandler(500, 'restorePassword: no!');
+    async sendRestoreLink(email: string){
+        const userCollection = MongoDB.getCollection<IUser>('users');
+        const userFetcher = new Collection<IUser>(userCollection);
+        const userDoc = await userFetcher.getOne({email});
+
+        if(!userDoc) throw new ErrorHandler(404, "User with this email not found")
+        const restoreToken = jwt.sign({userID: userDoc?._id, email: email}, "secretJWTtOkkEN2222", {expiresIn: '10m'});
+        return {restoreToken};
     }
 
-    async sendRestoreLink(email: string): Promise<void> {
-        throw new ErrorHandler(500, 'sendRestoreLink: no!');
+    async restorePassword(restoreToken: string, newPassword: string){
+        const verified = jwt.verify(restoreToken, "secretJWTtOkkEN2222");
+        if(!verified) throw new ErrorHandler(400, "Restore token is invalid");
+        const decoded = jwt.decode(restoreToken, {json: true});
+        if(!decoded) throw new ErrorHandler(500, "Error with decode restore token")
+
+        const passwordCollection = MongoDB.getCollection<IPassword>('passwords');
+        const passwordFetcher = new Collection<IPassword>(passwordCollection);
+        const userID = new ObjectId(decoded.userID);
+        const passwordDoc = await passwordFetcher.getOne({userID});
+
+        if(!passwordDoc) throw new ErrorHandler(500, "DB error")
+
+        const saltRounds: number = 10;
+        bcrypt.genSalt(saltRounds, function (err, salt) {
+            bcrypt.hash(newPassword, salt, async function (err, hash){
+                if(err){
+                    throw new ErrorHandler(500, "Hash pass")
+                }
+                else{
+                    await passwordFetcher.updateOne({userID}, {hashedValue: hash})
+                }
+            })
+        })
     }
 }
 

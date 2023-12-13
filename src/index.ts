@@ -5,6 +5,7 @@ import {MongoDB} from "./database/mongoDB/MongoDB";
 import {RedisDB} from "./database/redis/RedisDB";
 import cors from "cors";
 import cookieParser from "cookie-parser"
+import {TransportCreator} from "./Services/EmailService/TransportCreator";
 
 dotenv.config();
 
@@ -55,8 +56,25 @@ async function initRedis(){
 	await DB.connect();
 }
 
+function createMailTransport(){
+	const host = process.env.EMAIL_HOST
+	const port = process.env.EMAIL_PORT
+	const user = process.env.EMAIL_AUTH_USER
+	const pass = process.env.EMAIL_AUTH_PASS
+
+	if(!host || !port || !user || !pass){
+		console.log("Error with create a mail transport")
+		return;
+	}
+
+	const transporter = new TransportCreator(host, port, user, pass);
+	transporter.createTransport();
+	transporter.verify();
+}
+
 app.listen(port, async () => {
 	await initMongoDB();
 	await initRedis();
+	createMailTransport();
 	console.log(`[server]: Server is running at http://localhost:${port}`);
 });

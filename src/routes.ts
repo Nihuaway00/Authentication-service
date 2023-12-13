@@ -19,11 +19,11 @@ export const createRoutes = (router: Router) => {
 		(req: Request, res: Response, next: NextFunction) => registrationValidate.exist(req, res, next),
 		AuthController.registration
 	);
-	router.post('/sendRestoreToken',
+	router.post('/restore',
 		(req: Request, res: Response, next: NextFunction) => sendRestoreTokenValidate.exist(req, res, next),
 		AuthController.sendRestoreLink
 	);
-	router.post('/restorePassword',
+	router.post('/restore/token/:restoreToken',
 		(req: Request, res: Response, next: NextFunction) => restorePasswordValidate.exist(req, res, next),
 		AuthController.restorePassword
 	);

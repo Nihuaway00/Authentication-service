@@ -1,7 +1,8 @@
 import {IAuthController} from "./IAuthController";
 import {NextFunction,Request,Response} from "express-serve-static-core";
 import {ErrorHandler} from "../handlers/ErrorHandler/ErrorHandler";
-import AuthService from "../AuthService/AuthService";
+import AuthService from "../Services/AuthService/AuthService";
+import EmailService from "../Services/EmailService/EmailService";
 
 class AuthController implements IAuthController{
     async login(req: Request, res: Response, next: NextFunction)  {
@@ -37,8 +38,9 @@ class AuthController implements IAuthController{
 
     async restorePassword(req: Request, res: Response, next: NextFunction) {
         try{
-            const {name, email, password} = req.body;
-
+            const {password} = req.body;
+            const {restoreToken} = req.params;
+            await AuthService.restorePassword(restoreToken,password);
             res.sendStatus(201);
         }catch (e) {
             if(e instanceof ErrorHandler){
@@ -50,8 +52,12 @@ class AuthController implements IAuthController{
 
     async sendRestoreLink(req: Request, res: Response, next: NextFunction) {
         try{
-            const {name, email, password} = req.body;
+            const {email} = req.body;
 
+            const {restoreToken} = await AuthService.sendRestoreLink(email);
+            console.log("restore token: ", restoreToken);
+            const backendUrl = process.env.BACKEND_URL;
+            EmailService.send(email, "Восстановление доступа", `restore link: ${backendUrl}/auth/restore/token/${restoreToken}`);
             res.sendStatus(201);
         }catch (e) {
             if(e instanceof ErrorHandler){
