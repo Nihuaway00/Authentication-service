@@ -3,11 +3,21 @@ import {NextFunction,Request,Response} from "express-serve-static-core";
 import {ErrorHandler} from "../../handlers/ErrorHandler/ErrorHandler";
 import AuthService from "../../Services/AuthService/AuthService";
 import EmailService from "../../Services/EmailService/EmailService";
+import validator from "validator";
 
 class AuthController implements IAuthController{
     async login(req: Request, res: Response, next: NextFunction)  {
         try{
             const {email, password} = req.body;
+
+            if(!validator.isEmail(email)){
+                throw new ErrorHandler(400, "Email is incorrect");
+            }
+
+            if(!validator.isStrongPassword(password)){
+                throw new ErrorHandler(400, "Password is incorrect");
+            }
+
             if(req.cookies['token']){
                 throw new ErrorHandler(400, "You have been already logged in")
             }
@@ -26,6 +36,19 @@ class AuthController implements IAuthController{
     async registration(req: Request, res: Response, next: NextFunction){
         try{
             const {name, email, password} = req.body;
+
+            if(!validator.isAlpha(name, "en-US")){
+                throw new ErrorHandler(400, "Name is incorrect. It must be written in Latin");
+            }
+
+            if(!validator.isEmail(email)){
+                throw new ErrorHandler(400, "Email is incorrect");
+            }
+
+            if(!validator.isStrongPassword(password)){
+                throw new ErrorHandler(400, "Password is incorrect");
+            }
+
             await AuthService.registration(name, email, password);
             res.status(201).send("Your account had been created");
         }catch (e) {
@@ -39,6 +62,11 @@ class AuthController implements IAuthController{
     async restorePassword(req: Request, res: Response, next: NextFunction) {
         try{
             const {password} = req.body;
+
+            if(!validator.isStrongPassword(password)){
+                throw new ErrorHandler(400, "Password is incorrect");
+            }
+
             const {restoreToken} = req.params;
             await AuthService.restorePassword(restoreToken,password);
             res.sendStatus(201);
@@ -53,6 +81,10 @@ class AuthController implements IAuthController{
     async sendRestoreLink(req: Request, res: Response, next: NextFunction) {
         try{
             const {email} = req.body;
+
+            if(!validator.isEmail(email)){
+                throw new ErrorHandler(400, "Email is incorrect");
+            }
 
             const {restoreToken} = await AuthService.sendRestoreLink(email);
             console.log("restore token: ", restoreToken);
