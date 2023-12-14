@@ -19,6 +19,9 @@ export const createRoutes = (router: Router) => {
 		(req: Request, res: Response, next: NextFunction) => registrationValidate.exist(req, res, next),
 		AuthController.registration
 	);
+	router.post('/logout',
+		AuthController.logout
+	);
 	router.post('/restore',
 		(req: Request, res: Response, next: NextFunction) => sendRestoreTokenValidate.exist(req, res, next),
 		AuthController.sendRestoreLink
