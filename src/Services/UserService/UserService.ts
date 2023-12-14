@@ -11,8 +11,7 @@ class UserService{
 
         const userCollection = MongoDB.getCollection<IUser>('users');
         const userFetcher = new Collection<IUser>(userCollection);
-
-        const userDoc = userFetcher.getOne({_id: new ObjectId(decoded._id)});
+        const userDoc = await userFetcher.getOne({_id: new ObjectId(decoded._id)});
         if(!userDoc) throw new ErrorHandler(500, "DB error")
         return {user: userDoc};
     }
