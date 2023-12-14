@@ -7,10 +7,11 @@ import {IPassword} from "../../interfaces/IPassword";
 import {ObjectId, UUID} from "mongodb";
 import jwt from "jsonwebtoken"
 
+const JWT_SECRET: string = process.env.JWT_SECRET || "default";
+const JWT_RESTORE_SECRET: string = process.env.JWT_RESTORE_SECRET || "default_restore";
+
 class AuthService{
     async login(email: string, password: string){
-        //check email
-
         const userCollection = MongoDB.getCollection<IUser>('users');
         const userFetcher = new Collection<IUser>(userCollection);
         const userDoc = await userFetcher.getOne({email});
@@ -29,7 +30,7 @@ class AuthService{
             throw new ErrorHandler(400, "Password is incorrect")
         }
 
-        const token: string = jwt.sign({userID: userDoc?._id, email: email}, "secretJWTtOkkEN", {expiresIn: '30s'});
+        const token: string = jwt.sign({_id: userDoc?._id, email: email}, JWT_SECRET, {expiresIn: '30m'});
         return {token, user: userDoc as IUser}
     }
 
@@ -66,13 +67,11 @@ class AuthService{
         const userDoc = await userFetcher.getOne({email});
 
         if(!userDoc) throw new ErrorHandler(404, "User with this email not found")
-        const restoreToken = jwt.sign({userID: userDoc?._id, email: email}, "secretJWTtOkkEN2222", {expiresIn: '10m'});
+        const restoreToken = jwt.sign({userID: userDoc?._id, email: email}, JWT_RESTORE_SECRET, {expiresIn: '10m'});
         return {restoreToken};
     }
 
     async restorePassword(restoreToken: string, newPassword: string){
-        const verified = jwt.verify(restoreToken, "secretJWTtOkkEN2222");
-        if(!verified) throw new ErrorHandler(400, "Restore token is invalid");
         const decoded = jwt.decode(restoreToken, {json: true});
         if(!decoded) throw new ErrorHandler(500, "Error with decode restore token")
 

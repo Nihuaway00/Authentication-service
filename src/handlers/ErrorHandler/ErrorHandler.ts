@@ -11,4 +11,8 @@ export class ErrorHandler extends Error{
         this.message = message;
         this.status = status;
     }
+
+    static notVerified(){
+        return new ErrorHandler(401, "Token isn`t verified");
+    }
 }
